@@ -1,0 +1,393 @@
+<!DOCTYPE HTML>
+<head>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <link rel="icon" type="image/png" href="favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="favicon-48x48.png" sizes="48x48">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="stylesheet" href="css/main.css" />
+    <title>Atomo</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <style>
+        @font-face {
+            font-family: "ROBOTECHGP";
+            src: url(font/ROBOTECHGP.ttf.html) format("truetype");
+        }
+        .ibtype {
+            font-size: 45px;
+        }
+        #inf {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 97px;
+            font-weight: bold;
+            color: rgb(243,239,239);
+            z-index: 10000;
+            font-family: "ROBOTECHGP", Verdana, Tahoma;
+        }
+        body {
+            margin: 0px;
+            background-image: url('/img/bg.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+        }
+
+        #LOADING {
+            box-shadow: 0px 0px 12px rgba(0,255,255,0.5);
+            background-size: 98% 98%;
+            width: 98%;
+            height: 98%;
+            position: fixed;
+            top: 0px;
+            bottom: 0px;
+            right: 0px;
+            left: 0px;
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: auto;
+            margin-bottom: auto;
+            color: white;
+        }
+
+        #MainVideo {
+            z-index: 10000;
+            position: fixed;
+            box-shadow: 0px 0px 12px rgba(0,255,255,0.5);
+            top: 0px;
+            bottom: 0px;
+            right: 0px;
+            left: 0px;
+            width: 60%;
+            height: 60%;
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        #LOADING2 {
+            font-family: "ROBOTECHGP", Verdana, Tahoma;
+            position: fixed;
+            left: 30px;
+            bottom: 60px;
+            font-size: 60px;
+            font-weight: bold;
+            color: rgba(71,71,71,0.75);
+            /*text-shadow: 1px -1px 20px rgb(71,71,71);*/
+        }
+
+        #LOADING3 {
+            background: #fff;
+            background-size: 95% 95%;
+            width: 95%;
+            height: 3px;
+            position: fixed;
+            bottom: 50px;
+            right: 0px;
+            left: 0px;
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        progress[value]::-webkit-progress-value {
+            background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, .25), rgba(0, 0, 0, .25)), -webkit-linear-gradient(left,rgb(0, 92, 255),rgb(5, 255, 5),rgb(0, 255, 245));
+            border-radius: 2px;
+            background-size: 35px 20px, 100% 100%, 100% 100%;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        var ttable;
+        var atoms = [];
+        var elements = [];
+        var geometry = {};
+        var material = {};
+        var vertices = [];
+        var table, table2, czlst, czrlst;
+        var font,mainLight;
+        var rid1, rid2;
+        var btypes = ["Single","Double","Triple"];
+    </script>
+    <script src="js/stats.min.js"></script>
+    <script src="js/three.js"></script>
+    <script src="js/threex.windowresize.js"></script>
+    <script src="js/TrackballControls.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script src="js/CanvasRenderer.js"></script>
+    <script src="js/Projector.js"></script>
+    <script src="js/CB.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/Atom.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <div id="openKBD" onclick="openKBD();" style="display: none;"></div>
+    <div id="inf"></div>
+    <div id="KBD">
+        <div id="closeKBD" onclick="closeKBD();" style="display: none;"></div>
+        <table id="ttable" style="display: none;"></table>
+        <button id="Reset" onclick="Reset();" style="display: none;">Reset</button>
+    </div>
+    <div id="LOADING" style="display: none;">
+        <video id="MainVideo" style="display: none;" preload="auto">
+            <source src="vid/logo.webm.html" type="video/webm" />
+            Your browser does not support the video tag.
+        </video>
+        <span id="LOADING2"></span>
+        <progress id="LOADING3" max="15" value="0"></progress>
+    </div>
+    <script>
+        var zAMOUNT = 100;
+        var zcontainer;
+        var zcamera, zscene, zrenderer;
+        var zvideo, zimage, zimageContext,
+        zimageReflection, zimageReflectionContext, zimageReflectionGradient,
+        ztexture, ztextureReflection;
+        var zmesh;
+        var zmouseX = 0;
+        var zmouseY = 0;
+        var zwindowHalfX = window.innerWidth / 2;
+        var zwindowHalfY = window.innerHeight / 2;
+        function zinit() {
+            zcontainer = document.createElement('div');
+            zcontainer.id = "zcontainer";
+            zcontainer.style.zIndex = 100000;
+            zcontainer.style.display = "none";
+            document.body.appendChild(zcontainer);
+            zcamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+            zcamera.position.z = 1000;
+            zscene = new THREE.Scene();
+            zvideo = document.getElementById('MainVideo');
+            //
+            zimage = document.createElement('canvas');
+            zimage.width = 480;
+            zimage.height = 204;
+            zimageContext = zimage.getContext('2d');
+            zimageContext.fillStyle = '#000000';
+            zimageContext.fillRect(0, 0, 480, 204);
+            ztexture = new THREE.Texture(zimage);
+            var zmaterial = new THREE.MeshBasicMaterial({ map: ztexture, overdraw: 0.5 });
+            zimageReflection = document.createElement('canvas');
+            zimageReflection.width = 480;
+            zimageReflection.height = 204;
+            zimageReflectionContext = zimageReflection.getContext('2d');
+            zimageReflectionContext.fillStyle = '#000000';
+            zimageReflectionContext.fillRect(0, 0, 480, 204);
+            zimageReflectionGradient = zimageReflectionContext.createLinearGradient(0, 0, 0, 204);
+            zimageReflectionGradient.addColorStop(0.2, 'rgba(240, 240, 240, 1)');
+            zimageReflectionGradient.addColorStop(1, 'rgba(240, 240, 240, 0.8)');
+            ztextureReflection = new THREE.Texture(zimageReflection);
+            var zmaterialReflection = new THREE.MeshBasicMaterial({ map: ztextureReflection, side: THREE.BackSide, overdraw: 0.5 });
+            //
+            var zplane = new THREE.PlaneGeometry(480, 204, 4, 4);
+            zmesh = new THREE.Mesh(zplane, zmaterial);
+            zmesh.scale.x = zmesh.scale.y = zmesh.scale.z = 1.5;
+            zscene.add(zmesh);
+            zmesh = new THREE.Mesh(zplane, zmaterialReflection);
+            zmesh.position.y = -306;
+            zmesh.rotation.x = -Math.PI;
+            zmesh.scale.x = zmesh.scale.y = zmesh.scale.z = 1.5;
+            zscene.add(zmesh);
+            //
+            var zseparation = 150;
+            var zAMOUNTx = 10;
+            var zAMOUNTy = 10;
+            var PI2 = Math.PI * 2;
+            var zmaterial = new THREE.SpriteCanvasMaterial({
+                color: 0x0808080,
+                program: function (context) {
+                    context.beginPath();
+                    context.arc(0, 0, 0.5, 0, PI2, true);
+                    context.fill();
+                }
+            });
+            for (var ix = 0; ix < zAMOUNTx; ix++) {
+                for (var iy = 0; iy < zAMOUNTy; iy++) {
+                    zparticle = new THREE.Sprite(zmaterial);
+                    zparticle.position.x = ix * zseparation - ((zAMOUNTx * zseparation) / 2);
+                    zparticle.position.y = -153;
+                    zparticle.position.z = iy * zseparation - ((zAMOUNTy * zseparation) / 2);
+                    zparticle.scale.x = zparticle.scale.y = 2;
+                    zscene.add(zparticle);
+                }
+            }
+            zrenderer = new THREE.CanvasRenderer();
+            zrenderer.setClearColor(0xf0f0f0);
+            zrenderer.setPixelRatio(window.devicePixelRatio);
+            zrenderer.setSize(window.innerWidth, window.innerHeight);
+            zcontainer.appendChild(zrenderer.domElement);
+            document.addEventListener('mousemove', zonDocumentMouseMove, false);
+            //
+            window.addEventListener('resize', zonWindowResize, false);
+        }
+        function zonWindowResize() {
+            zwindowHalfX = window.innerWidth / 2;
+            zwindowHalfY = window.innerHeight / 2;
+            zcamera.aspect = window.innerWidth / window.innerHeight;
+            zcamera.updateProjectionMatrix();
+            zrenderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        function zonDocumentMouseMove(event) {
+            zmouseX = (event.clientX - zwindowHalfX);
+            zmouseY = (event.clientY - zwindowHalfY) * 0.2;
+        }
+        //
+        function zanimate() {
+            rid1 = requestAnimationFrame(zanimate);
+            zrender();
+        }
+        function zrender() {
+            zcamera.position.x += (zmouseX - zcamera.position.x) * 0.05;
+            zcamera.position.y += (-zmouseY - zcamera.position.y) * 0.05;
+            zcamera.lookAt(zscene.position);
+            if (zvideo.readyState === zvideo.HAVE_ENOUGH_DATA) {
+                zimageContext.drawImage(zvideo,0,0,480,204);
+                if (ztexture) ztexture.needsUpdate = true;
+                if (ztextureReflection) ztextureReflection.needsUpdate = true;
+            }
+            zimageReflectionContext.drawImage(zimage, 0, 0);
+            zimageReflectionContext.fillStyle = zimageReflectionGradient;
+            zimageReflectionContext.fillRect(0, 0, 480, 204);
+            zrenderer.render(zscene, zcamera);
+        }
+    </script>
+    <script>
+        var md = document.getElementById("LOADING");
+        var ld = document.getElementById("LOADING2");
+        var pb = document.getElementById("LOADING3");
+        var inf = document.getElementById("inf");
+        var video = document.getElementById("MainVideo");
+        var ldx = 0;
+        var ldc = 0;
+        var lda = 0;
+        var state = 0;
+        var ld1, ld2, ld3;
+        var infName1 = "", infName2 = "", infType = "";
+        var islightsOn = true;
+        function lightOn() {
+            scene.add(mainLight);
+        }
+        function lightOff() {
+            scene.remove(mainLight);
+        }
+        function clearInfo() {
+            infName1 = "";
+            infName2 = "";
+            infType = "";
+        }
+        function updateInfo() {
+            var txt = "";
+            inf.innerHTML = infName1 + infName2 + infType;
+        }
+        function next() {
+            if (state == 0) {
+                ld3 = setInterval("loading3();", 1);
+                document.removeEventListener("click", next);
+                zinit();
+            }
+            else if (state == 1) {
+                md.style.display = "block";
+                setTimeout("loading1();", 1);
+                ld1 = setInterval("loading1();", 500);
+                ld2 = setInterval("loading2();", 1);
+                $("#zcontainer").show();
+                video.play();
+                zanimate();
+            }
+            else if (state == 2) {
+                cancelAnimationFrame(rid1);
+                clearInterval(ld1);
+                start1();
+                document.removeEventListener('mousemove', zonDocumentMouseMove, false);
+                window.removeEventListener('resize', zonWindowResize, false);
+                $("#zcontainer").hide();
+                md.style.display = "none";
+                $("#openKBD").show();
+                setTimeout("start2();", 0);
+                openKBD();
+            }
+            state++;
+        }
+        function loading3() {
+            document.body.style.background = "rgba(0,0,0," + lda + ")";
+            lda += 0.01;
+            if (lda >= 1) {
+                clearInterval(ld3);
+                next();
+            }
+        }
+        document.addEventListener("click", next);
+        function loading1() {
+            if (ldx == 0)
+                ld.innerHTML = "Loading";
+            else if (ldx == 1)
+                ld.innerHTML = "Loading.";
+            else if (ldx == 2)
+                ld.innerHTML = "Loading..";
+            else if (ldx == 3)
+                ld.innerHTML = "Loading...";
+            if (++ldx == 4)
+                ldx = 0;
+        }
+        function loading2() {
+            pb.value = video.currentTime;
+            if (pb.value >= 14.9) {
+                clearInterval(ld2);
+                next();
+            }
+        }
+        ttable = document.getElementById("ttable");
+        function tc(val) {
+            var x = null;
+            //try {
+            x = eval(val);
+            //} catch (err) { alert(err); }
+            return x;
+        }
+        var ttttt = 000;
+        function openKBD() {
+            $("#openKBD,#inf").hide(ttttt);
+            $("#closeKBD,#KBD,#ttable,#Reset").show(ttttt);
+        }
+        function closeKBD() {
+            $("#openKBD,#inf").show(ttttt);
+            $("#closeKBD,#KBD,#ttable,#Reset").hide(ttttt);
+        }
+        new THREE.FontLoader().load('/font/helvetiker_regular.typeface.json.html', function (response) {
+            font = response;
+            //setTimeout("start();", 100);
+        });
+        var start1 = function () {
+            tc("db_init();");
+            tc("atom_init();");
+        };
+        var start2 = function () {
+            tc("init();");
+            new THREEx.WindowResize(renderer, camera);
+            tc("animate();");
+            //atom_add(elements[9].atom);
+            //atom_add(elements[0].atom);
+            //atom_add(elements[0].atom);
+            //atom_add(elements[7].atom);
+        };
+        /*function frame()
+        {
+        controls.update();
+        render();
+        }
+        setInterval("frame();", 1000.0 / 6.0);*/
+        /*var add = function () {
+        atom_add(elements[0].atom);
+        }*/
+        //setTimeout("start();", 1000);
+        //setTimeout("add();", 2000);
+        //setTimeout("add();", 2500);
+    </script>
+</body>

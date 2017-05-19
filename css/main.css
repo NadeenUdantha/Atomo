@@ -1,0 +1,105 @@
+
+body {
+    margin: 0px;
+    background-color: #000000;
+    overflow: hidden;
+}
+
+#ttable {
+    display: none;
+    background-size: 100% 100%;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    z-index: 1000;
+}
+
+td {
+    /*background: transparent; /*url('../img/grefc.png') no-repeat center;*/
+}
+
+#ele {
+    width: 150px;
+    height: 150px;
+    box-shadow: 0px 0px 12px rgba(0,255,255,0.5);
+    text-align: center;
+    border: 1px solid rgba(127,255,255,0.25);
+    cursor: pointer;
+}
+
+    #ele .num {
+        font-size: 12px;
+        color: rgba(127,255,255,0.75);
+    }
+
+    #ele .sym {
+        font-size: 60px;
+        font-weight: bold;
+        color: rgba(255,255,255,0.75);
+        text-shadow: 0 0 10px rgba(0,255,255,0.95);
+    }
+
+    #ele .inf {
+        font-size: 12px;
+        color: rgba(127,255,255,0.75);
+    }
+#Reset {
+    background: transparent;
+    -webkit-tap-highlight-color: transparent;
+    background-size: 100% 100%;
+    width: 80px;
+    height: 48px;
+    bottom: 0px;
+    right: 0px;
+    position: fixed;
+    margin-right: auto;
+    margin-left: auto;
+    cursor: pointer;
+    opacity: 0.6;
+    z-index: 10000;
+    color: white;
+    box-shadow: 0px 0px 12px rgba(0,255,255,0.5);
+    text-align: center;
+    border: 1px solid rgba(127,255,255,0.25);
+}
+#closeKBD {
+    background: transparent url('/img/slidedown.png') no-repeat center;
+    -webkit-tap-highlight-color: transparent;
+    background-size: 100% 100%;
+    width: 80px;
+    height: 48px;
+    top: 0px;
+    right: 0px;
+    left: 0px;
+    position: fixed;
+    margin-right: auto;
+    margin-left: auto;
+    cursor: pointer;
+    /*opacity: 0.6;*/
+    z-index: 10000;
+}
+
+#openKBD {
+    background: transparent url('/img/slideup.png') no-repeat center;
+    -webkit-tap-highlight-color: transparent;
+    background-size: 100% 100%;
+    /*background-color:#000000;*/
+    width: 80px;
+    height: 48px;
+    display: block;
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+    margin-right: auto;
+    margin-left: auto;
+    cursor: pointer;
+    /*opacity: 0.6;*/
+    z-index: 10000;
+}
